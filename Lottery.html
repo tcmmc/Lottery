@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>قرعه‌کشی</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #05070b;
+      --card: rgba(10, 18, 28, 0.72);
+      --cyan: #00f0ff;
+      --mint: #3dffb5;
+      --text: #e8fbff;
+      --muted: #8aa3b5;
+      --danger: #ff5c7a;
+      --line: rgba(0, 240, 255, 0.22);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Vazirmatn", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 24px 14px;
+      overflow-x: hidden;
+    }
+
+    .bg, .grid, .aura {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .bg {
+      background:
+        radial-gradient(900px 500px at 15% 10%, rgba(0, 240, 255, 0.16), transparent 60%),
+        radial-gradient(700px 420px at 85% 80%, rgba(61, 255, 181, 0.12), transparent 55%),
+        linear-gradient(180deg, #05070b 0%, #071018 100%);
+    }
+
+    .grid {
+      background-image:
+        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+      opacity: 0.35;
+    }
+
+    .aura {
+      background: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.08), transparent 50%);
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      padding: 2rem 1.6rem;
+      border-radius: 28px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      margin-bottom: 0.45rem;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.8;
+      margin-bottom: 1.25rem;
+    }
+
+    .user-chip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(0, 240, 255, 0.14);
+      margin-bottom: 1rem;
+    }
+
+    .user-chip span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .user-chip strong {
+      color: var(--cyan);
+      font-size: 0.98rem;
+      direction: ltr;
+      unicode-bidi: plaintext;
+    }
+
+    .error-box {
+      display: none;
+      margin-bottom: 0.9rem;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 92, 122, 0.1);
+      border: 1px solid rgba(255, 92, 122, 0.35);
+      color: #ffb3c0;
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .error-box.show { display: block; }
+
+    .form-group { margin-bottom: 1rem; }
+
+    label {
+      display: block;
+      margin-bottom: 0.45rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      background: rgba(0, 0, 0, 0.28);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.98rem;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: rgba(0, 240, 255, 0.55);
+      box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.08);
+    }
+
+    .btn-submit, .btn-copy, .btn-link {
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 800;
+      transition: 0.18s ease;
+    }
+
+    .btn-submit {
+      margin-top: 0.4rem;
+      padding: 14px 16px;
+      border-radius: 999px;
+      font-size: 1rem;
+      color: #041016;
+      background: linear-gradient(135deg, var(--mint), var(--cyan));
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.18);
+    }
+
+    .btn-submit:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+    .links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      padding: 12px 10px;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(0, 240, 255, 0.16);
+    }
+
+    .btn-link:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      background: rgba(0, 240, 255, 0.06);
+    }
+
+    /* موفقیت — پیش‌فرض مخفی */
+    .success-wrap {
+      display: none;
+      text-align: center;
+    }
+
+    .success-wrap.show { display: block; }
+    #formWrap.hide { display: none; }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0.2rem auto 0.9rem;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #041016;
+      background: linear-gradient(135deg, var(--mint), var(--cyan));
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.25);
+    }
+
+    .success-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      line-height: 1.9;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+
+    .success-title span { color: var(--cyan); }
+
+    .track-box {
+      margin: 1rem 0 0.35rem;
+      padding: 14px 12px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed rgba(0, 240, 255, 0.35);
+    }
+
+    .track-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .track-code {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      direction: ltr;
+      unicode-bidi: plaintext;
+      word-break: break-all;
+    }
+
+    .btn-copy {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      color: #041016;
+      background: linear-gradient(135deg, var(--mint), var(--cyan));
+    }
+
+    .btn-copy:hover { filter: brightness(1.05); }
+
+    .copy-ok {
+      display: none;
+      margin-top: 8px;
+      font-weight: 700;
+      color: var(--mint);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .copy-ok.show { display: block; }
+
+    .hint {
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .success-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 1.15rem;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.7rem 1.25rem;
+        border-radius: 22px;
+      }
+
+      .links,
+      .success-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="aura"></div>
+
+  <div class="card">
+    <!-- فرم -->
+    <div id="formWrap">
+      <div class="badge">قرعه‌کشی</div>
+      <h1 class="title">شرکت در قرعه‌کشی</h1>
+      <p class="subtitle">برای نهایی کردن ثبت‌نام، اسم نمایشی‌ات رو وارد کن و دکمه ثبت رو بزن.</p>
+
+      <div class="user-chip">
+        <span>نام کاربری شما</span>
+        <strong id="usernameLabel">—</strong>
+      </div>
+
+      <div id="errorBox" class="error-box"></div>
+
+      <form id="lotteryForm" autocomplete="off">
+        <div class="form-group">
+          <label for="displayName">نام برای قرعه‌کشی</label>
+          <input type="text" id="displayName" placeholder="مثلاً: علی رضایی" required minlength="2" />
+        </div>
+
+        <button type="submit" class="btn-submit">ثبت در قرعه‌کشی</button>
+      </form>
+
+      <div class="links">
+        <a class="btn-link" href="participants.html">لیست شرکت‌کننده‌ها</a>
+        <a class="btn-link" href="track.html">پیگیری با کد</a>
+      </div>
+    </div>
+
+    <!-- موفقیت -->
+    <div id="successWrap" class="success-wrap">
+      <div class="success-icon">✓</div>
+      <p class="success-title" id="successMsg"></p>
+
+      <div class="track-box">
+        <div class="track-label">کد رهگیری شما</div>
+        <div class="track-code" id="trackCode">—</div>
+        <button type="button" class="btn-copy" id="copyBtn">کپی کد رهگیری</button>
+        <div class="copy-ok" id="copyOk">کپی شد ✓</div>
+      </div>
+
+      <p class="hint">این کد رهگیری رو پیش خودت نگه دار. برای پیگیری وضعیت قرعه‌کشی بهش نیاز داری.</p>
+
+      <div class="success-actions">
+        <a class="btn-link" href="participants.html">لیست شرکت‌کننده‌ها</a>
+        <a class="btn-link" href="track.html">پیگیری با کد</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var USERS_KEY = "users";
+      var SESSION_KEY = "currentUser";
+      var ENTRIES_KEY = "lotteryEntries";
+
+      var usernameLabel = document.getElementById("usernameLabel");
+      var errorBox = document.getElementById("errorBox");
+      var formWrap = document.getElementById("formWrap");
+      var successWrap = document.getElementById("successWrap");
+      var successMsg = document.getElementById("successMsg");
+      var trackCodeEl = document.getElementById("trackCode");
+      var lotteryForm = document.getElementById("lotteryForm");
+      var displayNameInput = document.getElementById("displayName");
+      var copyBtn = document.getElementById("copyBtn");
+      var copyOk = document.getElementById("copyOk");
+
+      function showError(text) {
+        errorBox.textContent = text;
+        errorBox.classList.add("show");
+      }
+
+      function hideError() {
+        errorBox.textContent = "";
+        errorBox.classList.remove("show");
+      }
+
+      function readJSON(key, fallback) {
+        try {
+          var raw = localStorage.getItem(key);
+          if (!raw) return fallback;
+          var data = JSON.parse(raw);
+          return data == null ? fallback : data;
+        } catch (e) {
+          return fallback;
+        }
+      }
+
+      function writeJSON(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+
+      function normalizeUser(name) {
+        return String(name || "").trim().toLowerCase();
+      }
+
+      function getCurrentUsername() {
+        var session = readJSON(SESSION_KEY, null);
+        if (typeof session === "string" && session.trim()) return session.trim();
+        if (session && typeof session === "object") {
+          if (session.username) return String(session.username).trim();
+          if (session.user) return String(session.user).trim();
+        }
+
+        var legacy = localStorage.getItem("username") || localStorage.getItem("loggedInUser");
+        if (legacy && legacy.trim()) return legacy.trim();
+
+        return "";
+      }
+
+      function getEntries() {
+        var entries = readJSON(ENTRIES_KEY, []);
+        return Array.isArray(entries) ? entries : [];
+      }
+
+      function saveEntries(entries) {
+        writeJSON(ENTRIES_KEY, entries);
+      }
+
+      function findEntry(username) {
+        var target = normalizeUser(username);
+        var entries = getEntries();
+        for (var i = 0; i < entries.length; i++) {
+          if (normalizeUser(entries[i].username) === target) return entries[i];
+        }
+        return null;
+      }
+
+      function makeTrackCode() {
+        var part = Date.now().toString(36).toUpperCase();
+        var rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+        return "LQ-" + part + "-" + rand;
+      }
+
+      function showSuccess(username, trackCode, already) {
+        if (already) {
+          successMsg.innerHTML = "کاربر <span>" + username + "</span> شما از قبل در قرعه‌کشی ثبت‌نام کردید";
+        } else {
+          successMsg.innerHTML = "کاربر <span>" + username + "</span> شما با موفقیت در قرعه‌کشی ثبت‌نام کردید";
+        }
+
+        trackCodeEl.textContent = trackCode;
+        copyOk.classList.remove("show");
+
+        formWrap.classList.add("hide");
+        successWrap.classList.add("show");
+      }
+
+      // نمایش نام کاربری
+      var username = getCurrentUsername();
+      if (!username) {
+        usernameLabel.textContent = "—";
+        showError("اول باید وارد حساب / ثبت‌نام کرده باشی. برو صفحه ثبت‌نام.");
+      } else {
+        usernameLabel.textContent = username;
+      }
+
+      // اگر قبلاً ثبت کرده، مستقیم موفقیت
+      if (username) {
+        var existing = findEntry(username);
+        if (existing) {
+          showSuccess(username, existing.trackCode, true);
+        }
+      }
+
+      // ثبت در قرعه‌کشی
+      lotteryForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        hideError();
+
+        username = getCurrentUsername();
+        if (!username) {
+          showError("نام کاربری پیدا نشد. اول ثبت‌نام کن.");
+          return;
+        }
+
+        var displayName = displayNameInput.value.trim();
+        if (displayName.length < 3) {
+          showError("نام نمایشی باید حداقل ۳ کاراکتر باشد.");
+          return;
+        }
+
+        var current = findEntry(username);
+        if (current) {
+          showSuccess(username, current.trackCode, true);
+          return;
+        }
+
+        var entry = {
+          username: username,
+          displayName: displayName,
+          trackCode: makeTrackCode(),
+          createdAt: new Date().toISOString()
+        };
+
+        var entries = getEntries();
+        entries.push(entry);
+        saveEntries(entries);
+
+        showSuccess(username, entry.trackCode, false);
+      });
+
+      // دکمه کپی
+      copyBtn.addEventListener("click", function () {
+        var code = trackCodeEl.textContent || "";
+        if (!code || code === "—") return;
+
+        function ok() {
+          copyOk.classList.add("show");
+          setTimeout(function () {
+            copyOk.classList.remove("show");
+          }, 1500);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(ok).catch(function () {
+            fallbackCopy(code, ok);
+          });
+        } else {
+          fallbackCopy(code, ok);
+        }
+      });
+
+      function fallbackCopy(text, done) {
+        var inp = document.createElement("input");
+        inp.value = text;
+        document.body.appendChild(inp);
+        inp.select();
+        try { document.execCommand("copy"); } catch (e) {}
+        document.body.removeChild(inp);
+        done();
+      }
+    })();
+  </script>
+</body>
+</html>
