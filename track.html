@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پیگیری کد | قرعه‌کشی</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #05080c;
+      --card: rgba(10, 18, 24, 0.72);
+      --cyan: #2de2e6;
+      --cyan2: #7afcff;
+      --text: #e8f6f7;
+      --muted: #8aa3a8;
+      --line: rgba(45, 226, 230, 0.22);
+      --danger: #ff6b8a;
+      --ok: #3dffb5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Vazirmatn", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(45, 226, 230, 0.18), transparent 60%),
+        radial-gradient(700px 420px at 100% 0%, rgba(45, 226, 230, 0.1), transparent 55%),
+        radial-gradient(600px 400px at 50% 100%, rgba(45, 226, 230, 0.08), transparent 50%),
+        var(--bg);
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+    }
+
+    .card {
+      width: min(520px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px 22px 22px;
+      backdrop-filter: blur(16px);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+        0 20px 50px rgba(0, 0, 0, 0.45),
+        0 0 80px rgba(45, 226, 230, 0.06);
+    }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff, var(--cyan2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s ease;
+      letter-spacing: 0.04em;
+    }
+
+    input:focus {
+      border-color: rgba(45, 226, 230, 0.65);
+      box-shadow: 0 0 0 4px rgba(45, 226, 230, 0.12);
+    }
+
+    input::placeholder { color: #5f777c; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(45, 226, 230, 0.08);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.2s ease;
+      user-select: none;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn.primary {
+      color: #042028;
+      border: none;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      box-shadow: 0 8px 24px rgba(45, 226, 230, 0.25);
+      margin-top: 4px;
+    }
+
+    .btn.ghost {
+      margin-top: 10px;
+      background: transparent;
+    }
+
+    .error {
+      display: none;
+      margin: 0 0 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 107, 138, 0.1);
+      border: 1px solid rgba(255, 107, 138, 0.35);
+      color: #ffd0da;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .error.show { display: block; }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(45, 226, 230, 0.06);
+      animation: pop 0.35s ease;
+    }
+
+    .result.show { display: block; }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .result-title {
+      font-weight: 800;
+      color: var(--ok);
+      font-size: 1rem;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(61, 255, 181, 0.35);
+      color: var(--ok);
+      background: rgba(61, 255, 181, 0.08);
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(45, 226, 230, 0.1);
+    }
+
+    .item span {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .item b {
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-align: left;
+      word-break: break-all;
+      color: var(--text);
+    }
+
+    .code-big {
+      margin-top: 12px;
+      text-align: center;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px dashed rgba(45, 226, 230, 0.4);
+      background: rgba(0, 0, 0, 0.25);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--cyan2);
+      font-size: 1.05rem;
+    }
+
+    .links {
+      margin-top: 16px;
+      display: grid;
+      gap: 8px;
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 22px 16px 18px; border-radius: 20px; }
+      h1 { font-size: 1.25rem; }
+    }
+
+    a.btn {
+  text-decoration: none;
+  color: inherit;
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  z-index: 5;
+}
+
+.links {
+  position: relative;
+  z-index: 5;
+}
+    
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <div class="wrap">
+    <div class="card">
+      <h1>پیگیری با کد</h1>
+      <p class="sub">کد پیگیری قرعه‌کشی‌ات را وارد کن تا وضعیت ثبت‌نامت را ببینی.</p>
+
+      <form id="trackForm" autocomplete="off">
+        <div class="field">
+          <label for="trackInput">کد پیگیری</label>
+          <input
+            id="trackInput"
+            type="text"
+            placeholder="مثلاً LQ-XXXX-XXXX"
+            maxlength="40"
+            required
+          />
+        </div>
+
+        <div class="error" id="errorBox"></div>
+
+        <button class="btn primary" type="submit">بررسی کد</button>
+      </form>
+
+      <div class="result" id="resultBox">
+        <div class="result-head">
+          <div class="result-title">ثبت‌نام پیدا شد</div>
+          <div class="pill">معتبر</div>
+        </div>
+
+        <div class="grid">
+          <div class="item">
+            <span>نام نمایشی</span>
+            <b id="rDisplay">—</b>
+          </div>
+          <div class="item">
+            <span>نام کاربری</span>
+            <b id="rUser">—</b>
+          </div>
+          <div class="item">
+            <span>زمان ثبت</span>
+            <b id="rDate">—</b>
+          </div>
+        </div>
+
+        <div class="code-big" id="rCode">—</div>
+      </div>
+
+      <div class="links">
+  <a class="btn ghost" href="lottery.html">صفحه قرعه‌کشی</a>
+  <a class="btn ghost" href="participants.html">لیست شرکت‌کنندگان</a>
+  <a class="btn ghost" href="index.html">ورود / ثبت‌نام</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK + shared data layer (must load before the app script below) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    (function () {
+      var form = document.getElementById("trackForm");
+      var input = document.getElementById("trackInput");
+      var errorBox = document.getElementById("errorBox");
+      var resultBox = document.getElementById("resultBox");
+
+      var rDisplay = document.getElementById("rDisplay");
+      var rUser = document.getElementById("rUser");
+      var rDate = document.getElementById("rDate");
+      var rCode = document.getElementById("rCode");
+
+      function showError(msg) {
+        if (!errorBox) return;
+        errorBox.textContent = msg;
+        errorBox.classList.add("show");
+        if (resultBox) resultBox.classList.remove("show");
+      }
+
+      function hideError() {
+        if (!errorBox) return;
+        errorBox.textContent = "";
+        errorBox.classList.remove("show");
+      }
+
+      function formatDate(iso) {
+        if (!iso) return "—";
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return "—";
+        try {
+          return d.toLocaleString("fa-IR");
+        } catch (e) {
+          return d.toLocaleString();
+        }
+      }
+
+      var cloudReady = LotteryDB.init();
+
+      if (form) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          hideError();
+
+          var code = input ? input.value : "";
+          if (!code || !code.trim()) {
+            showError("کد پیگیری را وارد کن.");
+            return;
+          }
+
+          cloudReady
+            .then(function () {
+              var found = LotteryDB.findEntryByCode(code);
+              if (!found) {
+                showError("کدی با این مشخصات پیدا نشد.");
+                return;
+              }
+
+              if (rDisplay) rDisplay.textContent = found.displayName || "—";
+              if (rUser) rUser.textContent = found.username ? "@" + found.username : "—";
+              if (rDate) rDate.textContent = formatDate(found.createdAt);
+              if (rCode) rCode.textContent = LotteryDB.normalizeCode(found.trackCode || found.code || code);
+
+              if (resultBox) resultBox.classList.add("show");
+            })
+            .catch(function (err) {
+              console.error(err);
+              showError("خطا در ارتباط با سرور. دوباره تلاش کن.");
+            });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

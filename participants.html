@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لیست شرکت‌کنندگان</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050b12;
+      --card: rgba(10, 22, 34, 0.78);
+      --cyan: #2de2e6;
+      --cyan2: #1bbdd0;
+      --text: #e8f6ff;
+      --muted: #8aa0b5;
+      --line: rgba(45, 226, 230, 0.28);
+      --danger: #ff6b8a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Vazirmatn", sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 100% -10%, rgba(45, 226, 230, 0.16), transparent 55%),
+        radial-gradient(900px 500px at -10% 100%, rgba(27, 189, 208, 0.12), transparent 50%),
+        var(--bg);
+      padding: 20px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 460px;
+      margin: 40px auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px 18px 18px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.25rem;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 55vh;
+      overflow: auto;
+      padding-left: 2px;
+      margin-bottom: 14px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(45, 226, 230, 0.18);
+      background: rgba(5, 14, 22, 0.75);
+    }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #042028;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      flex-shrink: 0;
+    }
+
+    .meta { min-width: 0; flex: 1; }
+
+    .name {
+      font-weight: 700;
+      font-size: 0.98rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .empty, .error {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--muted);
+      line-height: 1.9;
+      border: 1px dashed rgba(45, 226, 230, 0.25);
+      border-radius: 16px;
+      margin-bottom: 14px;
+    }
+
+    .error { color: #ffc0cc; border-color: rgba(255,107,138,0.35); }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      padding: 13px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(0,0,0,0.18);
+    }
+
+    .btn.primary {
+      color: #042028;
+      border: none;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+      box-shadow: 0 8px 24px rgba(45, 226, 230, 0.25);
+    }
+    .list { margin-top: 8px; display: grid; gap: 10px; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.28);
+}
+.avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 800; color: #042028;
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  flex: 0 0 auto;
+}
+.meta { flex: 1; min-width: 0; }
+.name { font-weight: 800; margin-bottom: 3px; }
+.info { color: var(--muted); font-size: 0.82rem; }
+.code {
+  font-size: 0.78rem; font-weight: 700; color: var(--cyan2);
+  padding: 6px 8px; border-radius: 9px;
+  border: 1px solid rgba(45, 226, 230, 0.25);
+  background: rgba(45, 226, 230, 0.06);
+  white-space: nowrap;
+}
+.empty {
+  text-align: center; color: var(--muted);
+  padding: 22px 10px; line-height: 1.8;
+}
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 14px;
+}
+.stat {
+  padding: 12px; border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,0.25); text-align: center;
+}
+.stat b { display: block; font-size: 1.2rem; color: var(--cyan2); margin-bottom: 4px; }
+.stat span { color: var(--muted); font-size: 0.82rem; }
+.actions { display: grid; gap: 8px; margin-top: 16px; }
+.top {
+  display: flex; justify-content: space-between; gap: 12px;
+  align-items: flex-start; margin-bottom: 16px;
+}
+.badge {
+  padding: 8px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700;
+  border: 1px solid rgba(45, 226, 230, 0.3);
+  background: rgba(45, 226, 230, 0.08); color: var(--cyan2);
+  white-space: nowrap;
+}
+a.btn { text-decoration: none; color: inherit; }
+
+    button,
+button.btn,
+#moreBtn {
+  font-family: "Vazirmatn", sans-serif;
+  font-weight: 700;
+}
+    
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="card">
+      <div class="top">
+        <div>
+          <h1>لیست شرکت‌کنندگان</h1>
+          <p class="lead">کسایی که تو قرعه‌کشی ثبت‌نام کردن</p>
+        </div>
+        <div class="badge" id="countBadge">0 نفر</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <b id="statTotal">0</b>
+          <span>کل شرکت‌کنندگان</span>
+        </div>
+        <div class="stat">
+          <b id="statToday">0</b>
+          <span>ثبت‌نام امروز</span>
+        </div>
+      </div>
+
+      <div class="list" id="listBox">
+        <div class="empty">در حال بارگذاری...</div>
+      </div>
+      
+<button type="button" class="btn ghost" id="moreBtn" style="display:none; width:100%; margin-top:12px;">
+  نمایش بیشتر
+</button>
+      
+      <div class="actions">
+        <a class="btn ghost" href="lottery.html">صفحه قرعه‌کشی</a>
+        <a class="btn ghost" href="track.html">پیگیری کد</a>
+        <a class="btn ghost" href="index.html">ورود / ثبت‌نام</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Firebase SDK + shared data layer (must load before the app script below) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      var box = document.getElementById("listBox");
+      var badge = document.getElementById("countBadge");
+      var total = document.getElementById("statTotal");
+      var today = document.getElementById("statToday");
+      var moreBtn = document.getElementById("moreBtn");
+
+      if (!box) return;
+
+      var entries = [];
+      try {
+        await LotteryDB.init();
+        entries = LotteryDB.getEntries();
+      } catch (e) {
+        console.error(e);
+        entries = [];
+        box.innerHTML = '<div class="error">خطا در خواندن اطلاعات از سرور.</div>';
+        if (moreBtn) moreBtn.style.display = "none";
+        return;
+      }
+
+      // جدیدها اول
+      entries.sort(function (a, b) {
+        return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+      });
+
+      if (badge) badge.textContent = entries.length + " نفر";
+      if (total) total.textContent = String(entries.length);
+
+      var todayCount = 0;
+      var now = new Date();
+      for (var i = 0; i < entries.length; i++) {
+        var d = new Date(entries[i].createdAt || "");
+        if (!isNaN(d) &&
+            d.getFullYear() === now.getFullYear() &&
+            d.getMonth() === now.getMonth() &&
+            d.getDate() === now.getDate()) {
+          todayCount++;
+        }
+      }
+      if (today) today.textContent = String(todayCount);
+
+      if (!entries.length) {
+        box.innerHTML = '<div class="empty">هنوز کسی ثبت‌نام نکرده است.</div>';
+        if (moreBtn) moreBtn.style.display = "none";
+        return;
+      }
+
+      var SHOW_FIRST = 4; // اول فقط ۴ تا
+      var shownAll = false;
+
+      function makeRow(item) {
+        var name = item.displayName || item.username || "بدون‌نام";
+        var user = item.username || "—";
+        var code = item.trackCode || "—";
+        var html = "";
+        html += '<div class="row">';
+        html += '<div class="avatar">' + String(name).charAt(0) + '</div>';
+        html += '<div class="meta">';
+        html += '<div class="name">' + name + '</div>';
+        html += '<div class="info">@' + user + '</div>';
+        html += '</div>';
+        html += '<div class="code">' + code + '</div>';
+        html += '</div>';
+        return html;
+      }
+
+      function render() {
+        var html = "";
+        var limit = shownAll ? entries.length : Math.min(SHOW_FIRST, entries.length);
+
+        for (var j = 0; j < limit; j++) {
+          html += makeRow(entries[j]);
+        }
+        box.innerHTML = html;
+
+        // دکمه فقط وقتی بیشتر از ۴ تا باشه
+        if (!moreBtn) return;
+
+        if (entries.length <= SHOW_FIRST) {
+          moreBtn.style.display = "none";
+          return;
+        }
+
+        moreBtn.style.display = "block";
+        if (shownAll) {
+          moreBtn.textContent = "نمایش کمتر";
+        } else {
+          moreBtn.textContent = "نمایش بیشتر (" + (entries.length - SHOW_FIRST) + " نفر دیگر)";
+        }
+      }
+
+      if (moreBtn) {
+        moreBtn.addEventListener("click", function () {
+          shownAll = !shownAll; // بزنه باز/بسته بشه
+          render();
+        });
+      }
+
+      render();
+    });
+  </script>
+</body>
+</html>

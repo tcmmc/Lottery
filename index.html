@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ثبت‌نام</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --cyan: #00f0ff;
+      --cyan-soft: #00b8c4;
+      --black: #05080c;
+      --text: #e8f9fb;
+      --muted: #8eb8c0;
+      --danger: #ff5c7a;
+      --ok: #2effc0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Vazirmatn', system-ui, sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+      padding: 2rem 1rem;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 180, 200, 0.25), transparent),
+        radial-gradient(circle at 15% 80%, rgba(0, 100, 120, 0.2), transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(0, 200, 210, 0.12), transparent 35%),
+        linear-gradient(160deg, #05080c 0%, #0a1520 45%, #071018 100%);
+      z-index: 0;
+    }
+
+    .grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .aura {
+      position: fixed;
+      width: min(700px, 90vw);
+      height: min(700px, 90vw);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(0, 220, 230, 0.14) 0%, transparent 65%);
+      filter: blur(50px);
+      z-index: 2;
+      animation: pulse 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 440px;
+      padding: clamp(2rem, 5vw, 2.8rem);
+      background: linear-gradient(145deg, rgba(10, 25, 35, 0.72), rgba(5, 12, 18, 0.5));
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      border-radius: 28px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 0 0 1px rgba(0, 240, 255, 0.05),
+        0 25px 60px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(0, 180, 200, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      animation: cardIn 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(36px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .card::before,
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border: 2px solid transparent;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .card::before {
+      top: 10px;
+      right: 10px;
+      border-top-color: rgba(0, 240, 255, 0.5);
+      border-right-color: rgba(0, 240, 255, 0.5);
+      border-radius: 0 16px 0 0;
+    }
+
+    .card::after {
+      bottom: 10px;
+      left: 10px;
+      border-bottom-color: rgba(0, 240, 255, 0.35);
+      border-left-color: rgba(0, 240, 255, 0.35);
+      border-radius: 0 0 0 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      margin-bottom: 1.2rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 999px;
+    }
+
+    .badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--cyan);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .title {
+      font-size: clamp(1.8rem, 5vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #ffffff 10%, #00f0ff 50%, #00b8c4 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 24px rgba(0, 240, 255, 0.3));
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.15rem;
+      text-align: right;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #b8eef2;
+      margin-bottom: 0.45rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: rgba(0, 20, 30, 0.55);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 14px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(142, 184, 192, 0.55);
+    }
+
+    .form-group input:focus {
+      border-color: rgba(0, 240, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
+      background: rgba(0, 30, 40, 0.65);
+    }
+
+    .form-group input.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(255, 92, 122, 0.15);
+    }
+    .error-box {
+      display: none;
+      padding: 12px 14px;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #ffd0d8;
+      background: rgba(255, 92, 122, 0.1);
+      border: 1px solid rgba(255, 92, 122, 0.35);
+      border-radius: 12px;
+    }
+
+    .error-box.show {
+      display: block;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 14px 20px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #041016;
+      background: linear-gradient(135deg, #00f0ff, #00b8c4);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(0, 240, 255, 0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 36px rgba(0, 240, 255, 0.5);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.3rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--cyan);
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.7rem 1.25rem;
+        border-radius: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="aura"></div>
+
+  <div class="card">
+    <div class="badge">عضویت</div>
+    <h1 class="title">ثبت‌نام</h1>
+    <p class="subtitle">نام کاربری و رمز عبورت رو وارد کن تا بتونی تو قرعه‌کشی شرکت کنی.</p>
+
+    <div id="errorBox" class="error-box"></div>
+
+    <form id="registerForm" autocomplete="off">
+      <div class="form-group">
+        <label for="username">نام کاربری</label>
+        <input type="text" id="username" name="username" placeholder="مثلاً: ali_reza" required minlength="3">
+      </div>
+
+      <div class="form-group">
+        <label for="password">رمز عبور</label>
+        <input type="password" id="password" name="password" placeholder="حداقل ۶ کاراکتر" required minlength="6">
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">تکرار رمز عبور</label>
+        <input type="password" id="confirmPassword" name="confirm" placeholder="دوباره رمز رو بنویس" required minlength="6">
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">ثبت‌نام و ادامه</button>
+    </form>
+  </div>
+
+  <!-- Firebase SDK + shared data layer (must load before the app script below) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+
+  <script>
+    (function () {
+      var form = document.getElementById("registerForm");
+      var usernameInput = document.getElementById("username");
+      var passwordInput = document.getElementById("password");
+      var confirmInput = document.getElementById("confirmPassword");
+      var errorBox = document.getElementById("errorBox");
+      var submitBtn = document.getElementById("submitBtn");
+
+      function showError(text) {
+        if (!errorBox) {
+          alert(text);
+          return;
+        }
+        errorBox.textContent = text;
+        errorBox.classList.add("show");
+      }
+
+      function hideError() {
+        if (!errorBox) return;
+        errorBox.textContent = "";
+        errorBox.classList.remove("show");
+      }
+
+      function isValidUsername(name) {
+        return /^[a-zA-Z0-9_]{3,20}$/.test(String(name || "").trim());
+      }
+
+      function isValidPassword(pass) {
+        // فقط انگلیسی و نماد؛ فارسی نه
+        return /^[\x20-\x7E]{6,50}$/.test(String(pass || ""));
+      }
+
+      if (!form) {
+        console.log("registerForm پیدا نشد — id فرم رو چک کن");
+        return;
+      }
+
+      // اگر کاربر از قبل لاگین کرده، مستقیم برو صفحه قرعه‌کشی
+      if (LotteryDB.session.get()) {
+        window.location.href = "lottery.html";
+        return;
+      }
+
+      // داده‌های ابری رو از همون اول لود کن تا موقع ثبت‌نام آماده باشه
+      var cloudReady = LotteryDB.init();
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        hideError();
+
+        var username = (usernameInput && usernameInput.value ? usernameInput.value : "").trim();
+        var password = passwordInput ? String(passwordInput.value) : "";
+        var confirm = confirmInput ? String(confirmInput.value) : "";
+
+        if (!isValidUsername(username)) {
+          showError("نام کاربری فقط انگلیسی، عدد و _ — بین ۳ تا ۲۰ کاراکتر.");
+          return;
+        }
+
+        if (!isValidPassword(password)) {
+          showError("رمز فقط انگلیسی/عدد/نماد — حداقل ۶ کاراکتر (فارسی مجاز نیست).");
+          return;
+        }
+
+        if (password !== confirm) {
+          showError("رمز عبور و تکرار آن یکسان نیستند.");
+          return;
+        }
+
+        submitBtn.disabled = true;
+
+        cloudReady
+          .then(function () {
+            var found = LotteryDB.findUser(username);
+
+            if (found) {
+              if (String(found.password) !== password) {
+                showError("رمز عبور اشتباه است.");
+                submitBtn.disabled = false;
+                return;
+              }
+              LotteryDB.session.set(found.username);
+              window.location.href = "lottery.html";
+              return;
+            }
+
+            return LotteryDB.addUser({
+              username: username,
+              password: password,
+              createdAt: new Date().toISOString()
+            }).then(function () {
+              LotteryDB.session.set(username);
+              window.location.href = "lottery.html";
+            });
+          })
+          .catch(function (err) {
+            console.error(err);
+            showError("خطا در ارتباط با سرور. دوباره تلاش کن.");
+            submitBtn.disabled = false;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
